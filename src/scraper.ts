@@ -1,16 +1,17 @@
 import { chromium } from "@playwright/test";
 import { dismissAdPopup, futureDate, selectBookingDate, incrementChildren } from "./utils";
+import * as fs from "fs";
 
 /**
  * Scrapes hotel data from Booking.com for given search criteria.
  */
-async function main() {
+async function main( city: string = "Mumbai", checkInOffsetDays: number = 60, checkOutOffsetDays: number = 65) {
   const browser = await chromium.launch({
     channel: "chrome",
-    headless: false
+    headless: false, // If we set it true then we'll have to give proxies to load Indian version of booking.com.
   });
 
-  // Always create a fresh context, clearing any stored data
+  // Always create a fresh context, clearing any stored data.
   const context = await browser.newContext({
     storageState: undefined, // ensures no reuse
    });
@@ -21,24 +22,20 @@ async function main() {
     sessionStorage.clear();
     });
 
-  const city = "Mumbai";
-  const checkIn = futureDate(60);
-  const checkOut = futureDate(65);
-
-  // Load the actual homepage (Indian DOM guaranteed)
+  // Load the actual homepage we're using chrome channel 
   await page.goto("https://www.booking.com/", {
     waitUntil: "domcontentloaded",
   });
 
   await dismissAdPopup(page);
 
-  // Enter city
+  // Enter city (default: Mumbai)
   await page.getByLabel("Where are you going?").fill(city);
 
-  // Select dates
+  // Select dates (default: 60 and 65 days in future)
  await page.locator("[data-testid='date-display-field-start']").click();
- await selectBookingDate(page, checkIn);
- await selectBookingDate(page, checkOut);
+ await selectBookingDate(page, futureDate(checkInOffsetDays));
+ await selectBookingDate(page, futureDate(checkOutOffsetDays));
 
   // Configure guests: 2 adults + 1 infant
   await page.getByTestId("searchbox-form-button-icon").click();
@@ -63,12 +60,14 @@ async function main() {
   await page.getByRole("button", { name: /^Search$/ }).click();
   await page.waitForTimeout(8000); // wait for results to load, no dynamic wait is working reliably here.
 
+  // Apply 5-star filter
+  await page.locator(" [data-testid='filters-group']:has-text('Property rating') div[data-testid='filters-group-label-container']:has-text('5 stars')").waitFor({ state: "visible", timeout: 10000 });
   await page.locator(" [data-testid='filters-group']:has-text('Property rating') div[data-testid='filters-group-label-container']:has-text('5 stars')").click();
   await page.waitForLoadState("domcontentloaded", { timeout: 10000 });
   await page.locator("button[data-testid='filter:class=5']").waitFor({ state: "visible", timeout: 8000 });
 
   // Extract hotel cards.
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); // scroll to bottom to load all hotels.
   const hotels = page.getByTestId("property-card");
   const count = await hotels.count();
 
@@ -130,7 +129,10 @@ async function main() {
     continue;
   }
 }
-  console.log("🏆 Highest Rated 5-Star Hotel:", bestHotel);
+
+  // Save best hotel to JSON file.
+  fs.writeFileSync("best-hotel.json", JSON.stringify(bestHotel, null, 2));
+  console.log("Saved highest rated 5-star hotel to best-hotel.json");
 
   await browser.close();
 }
