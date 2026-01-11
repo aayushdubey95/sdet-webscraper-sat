@@ -45,10 +45,23 @@ The scraper stores the best rated hotel in best-hotel.json :
 ---
 
 ## 📦 Project Structure
-src/
-├── scraper.ts
-├── utils.ts
-└── types.ts
+.
+├── .gitignore                   # Files & folders excluded from version control
+│
+├── scraperResults/              # Stores generated JSON output (best-hotel.json)
+│
+├── src/
+│   ├── pages/                   # Page Object Model (POM) classes
+│   │   ├── HomePage.ts          # Homepage + Calendar + Guests + Popup dismiss
+│   │   └── SearchResultsPage.ts # Filters + Hotel extraction (best hotel logic)
+│   │
+│   ├── utils.ts                 # Shared helpers (futureDate)
+│   ├── types.ts                 # Shared TypeScript interfaces (HotelInfo, etc.)
+│   └── scraper.ts               # Main Booking.com scraping script (entry point)
+│
+├── package.json                 # Project metadata, dependencies & scripts
+├── tsconfig.json                # TypeScript configuration
+└── README.md                    # Project documentation
 
 ---
 
