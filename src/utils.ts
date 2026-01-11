@@ -46,10 +46,10 @@ export async function selectBookingDate(page, targetDate: string) {
 }
 
 /**
- * Dismisses blocking overlays/popups on the Booking.com page, such as the Genius sign-in popup.
+ * Dismisses Ad popup on the Booking.com page, such as the Genius sign-in popup.
  * @param page - The Playwright Page object representing the browser page.
  */
-export async function dismissBlockingOverlays(page) {
+export async function dismissAdPopup(page) {
   // Wait up to 5 seconds for Genius popup to appear
   const popupDismiss = page.locator("button[aria-label='Dismiss sign-in info.'] span span");
 

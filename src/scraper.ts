@@ -25,7 +25,7 @@ async function main() {
   const checkIn = futureDate(60);
   const checkOut = futureDate(65);
 
-  // 3) Load the actual homepage (Indian DOM guaranteed)
+  // Load the actual homepage (Indian DOM guaranteed)
   await page.goto("https://www.booking.com/", {
     waitUntil: "domcontentloaded",
   });
@@ -36,7 +36,7 @@ async function main() {
   await page.getByLabel("Where are you going?").fill(city);
 
   // Select dates
-  await page.locator("[data-testid='date-display-field-start']").click();
+ await page.locator("[data-testid='date-display-field-start']").click();
  await selectBookingDate(page, checkIn);
  await selectBookingDate(page, checkOut);
 
@@ -72,7 +72,12 @@ async function main() {
   const hotels = page.getByTestId("property-card");
   const count = await hotels.count();
 
-  const extractedHotels = [];
+  let bestHotel = {
+  name: "",
+  rating: 0,
+  price: "",
+  url: ""
+};
 
   for (let i = 0; i < count; i++) {
    const hotel = hotels.nth(i);
@@ -117,12 +122,15 @@ async function main() {
       .getAttribute("href")
       .catch(() => null);
 
-    extractedHotels.push({ name, rating, price, url });
+    // Compare & store only if rating is higher
+    if (rating > bestHotel.rating) {
+      bestHotel = { name, rating, price, url };
+    }
   } catch {
     continue;
   }
 }
-  console.log("Extracted hotels:", extractedHotels);
+  console.log("🏆 Highest Rated 5-Star Hotel:", bestHotel);
 
   await browser.close();
 }
