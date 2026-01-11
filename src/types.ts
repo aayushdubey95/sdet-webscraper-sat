@@ -4,7 +4,7 @@
  *  - Hotel name
  *  - User rating (e.g., 8.9, 9.1)
  *  - Listing price for the selected dates (in INR)
- *  - Direct hotel URL on the booking website 
+ *  - Direct hotel URL on the booking website
  */
 export interface HotelInfo {
   name: string;

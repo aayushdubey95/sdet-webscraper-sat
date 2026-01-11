@@ -1,6 +1,6 @@
 /**
  * Generates a future date string in the format YYYY-MM-DD.
- * 
+ *
  * This function adds the specified number of days to today's date
  * and returns the result formatted exactly as required by Booking.com
  * date-picker selectors (data-date="YYYY-MM-DD").
@@ -51,7 +51,9 @@ export async function selectBookingDate(page, targetDate: string) {
  */
 export async function dismissAdPopup(page) {
   // Wait up to 5 seconds for Genius popup to appear
-  const popupDismiss = page.locator("button[aria-label='Dismiss sign-in info.'] span span");
+  const popupDismiss = page.locator(
+    "button[aria-label='Dismiss sign-in info.'] span span"
+  );
 
   try {
     // If popup appears, click it
@@ -66,7 +68,7 @@ export async function dismissAdPopup(page) {
 
 /**
  * Increments the number of children in the guest selection on Booking.com by 1.
- * @param page 
+ * @param page
  */
 export async function incrementChildren(page) {
   const input = page.locator("#group_children");
@@ -77,8 +79,3 @@ export async function incrementChildren(page) {
   // Click the inner <span> of the PLUS button
   await counter.locator("button span").last().click();
 }
-
-
-
-
-
