@@ -1,0 +1,12 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+blob-report/
+trace/
+*.log
+.env
+*.tmp
+.idea/
+.vscode/
+.DS_Store
