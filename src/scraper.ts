@@ -7,6 +7,9 @@ import { SearchResultsPage } from "./pages/SearchResultsPage";
 
 /**
  * Scrapes hotel data from Booking.com for given search criteria.
+ * NOTE :
+ * - The script uses Mumbai as default city and dates 60 and 65 days from today.
+ * - But these can be changed by passing different parameters to main(). or even better, modifying to accept dynamic or CLI inputs.
  */
 async function main(
   city: string = "Mumbai",
@@ -15,7 +18,7 @@ async function main(
 ) {
   const browser = await chromium.launch({
     channel: "chrome",
-    headless: false, 
+    headless: false,
   });
 
   const context = await browser.newContext({
